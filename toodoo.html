@@ -1,0 +1,268 @@
+<html>
+<main>
+    <div class="container">
+      <h1 class="title">toodoo</h1>
+      <ul class="todo-list js-todo-list"></ul>
+
+      <div class="empty">
+        <img class="checklist-icon" src="checklist.png" width=70px height=70px></img>
+        <h2 class="empty_title">Create your first toodoo</h2>
+        <p class="empty_description">What do you want to complete today?</p>
+      </div>
+
+      <form class="js-form">
+        <input autofocus type="text" aria-label="Enter a new todo item" placeholder="Ex. Pick up groceries" class="js-todo-input">
+      </form>
+    </div>
+  </main>
+  
+  <svg>
+    <defs>
+      
+      <symbol id="delete-icon"viewBox="0 0 448 448"><path d="m224 0c-123.710938 0-224 100.289062-224 224s100.289062 224 224 224 224-100.289062 224-224c-.132812-123.65625-100.34375-223.867188-224-224zm124.449219 325.824219c4.15625 4.015625 5.828125 9.964843 4.363281 15.558593s-5.835938 9.964844-11.429688 11.429688-11.542968-.207031-15.558593-4.363281l-101.824219-101.824219-101.824219 101.824219c-6.277343 6.0625-16.257812 5.976562-22.429687-.195313s-6.257813-16.152344-.195313-22.429687l101.824219-101.824219-101.824219-101.824219c-4.15625-4.015625-5.828125-9.964843-4.363281-15.558593s5.835938-9.964844 11.429688-11.429688 11.542968.207031 15.558593 4.363281l101.824219 101.824219 101.824219-101.824219c6.277343-6.0625 16.257812-5.976562 22.429687.195313s6.257813 16.152344.195313 22.429687l-101.824219 101.824219zm0 0" fill="#D80027"/></symbol>
+    
+    </defs>
+  </svg>
+  <img class="delete-icon" src="delete.png" width=2px height=28px>
+
+  <link href='https://fonts.googleapis.com/css?family=Poppins' rel='stylesheet'>
+
+  <style>
+      html {
+  box-sizing: border-box;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+  margin: 0;
+  padding: 0;
+}
+
+body{
+  line-height: 1.4;
+  font-family: 'Poppins';
+  background-color: pink;  
+}
+
+.container {
+  width: 100%;
+  max-width: 550px;
+  margin: 0 auto;
+  padding-left: 10px;
+  padding-right: 10px;
+  height: 80vh;
+  margin-top: 5vh;
+  margin-bottom: 5vh;
+  overflow-y: auto;
+}
+
+
+.title {
+  margin-bottom: 20px;
+  font-size: 70px;
+  text-align: center;
+}
+
+svg {
+height: 64px;
+  width: 64px;
+}
+
+.todo-list {
+  list-style: none;
+  margin-bottom: 20px;
+}
+
+.todo-item {
+  margin-bottom: 10px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.todo-item span {
+  flex-grow: 1;
+  margin-left: 10px;
+  margin-right: 10px;
+  font-size: 22px;
+}
+
+.done span {
+  text-decoration: line-through;
+}
+
+input[type="checkbox"] {
+  display: none;
+}
+
+form {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
+input[type="text"] {
+  width: 100%;
+  padding: 10px;
+  border-radius: 4px;
+  border: 3px solid;
+  font-family: 'Poppins';
+}
+
+.tick {
+  width: 25px;
+  height: 25px;
+  border: 3px solid;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 20%;
+}
+
+.tick::before {
+  content: "✓";
+  font-size: 18px;
+  display: none;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans,
+    Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
+}
+
+.done .tick::before {
+  display: inline;
+}
+
+.delete-todo {
+  border: none;
+  background-color: transparent;
+  outline: none;
+  cursor: pointer;
+}
+
+.delete-todo svg {
+  width: 25px;
+  height: 25px;
+  pointer-events: none;
+}
+
+.empty {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.checklist-icon {
+  margin-bottom: 30px;
+}
+
+.todo-list:empty + .empty {
+  display: flex;
+}
+
+.empty_description {
+  margin-bottom: 35px;
+  font-size: 20px;
+}
+
+.empty_title{
+  margin-bottom: 10px;
+  font-size: 25px;
+}
+  </style>
+
+  <script>
+      let todoList = [];
+
+function addTodo(text) {
+  const todo = {
+    text,
+    checked: false,
+    id: Date.now(),
+  };
+
+  todoList.push(todo);
+  renderTodo(todo);
+}
+
+function renderTodo(todo) {
+  const list = document.querySelector('.js-todo-list');
+  const item = document.querySelector(`[data-key='${todo.id}']`);
+
+  if (todo.deleted) {
+    item.remove();
+    return
+  }
+
+  const isChecked = todo.checked ? 'done' : '';
+  const node = document.createElement("li");
+  node.setAttribute('class', `todo-item ${isChecked}`);
+  node.setAttribute('data-key', todo.id);
+  node.innerHTML = `
+    <input id="${todo.id}" type="checkbox"/>
+    <label for="${todo.id}" class="tick js-tick"></label>
+    <span>${todo.text}</span>
+    <button class="delete-todo js-delete-todo">
+    <svg><use href="#delete-icon"></use></svg>
+    </button>
+  `;
+
+  if (item) {
+    list.replaceChild(node, item);
+  } else {
+    list.append(node);
+  }
+}
+
+function todoDone(key) {
+  const index = todoList.findIndex(item => item.id === Number(key));
+  todoList[index].checked = !todoList[index].checked;
+  renderTodo(todoList[index]);
+
+  alert("Congrats on completing your task!");
+}
+
+function deleteTodo(key) {
+  const index = todoList.findIndex(item => item.id === Number(key));
+  const todo = {
+    deleted: true,
+    ...todoList[index]
+  };
+  todoList = todoList.filter(item => item.id !== Number(key));
+  renderTodo(todo);
+
+  alert("Your task has been deleted.");
+}
+
+
+const list = document.querySelector('.js-todo-list');
+list.addEventListener('click', event => {
+  if (event.target.classList.contains('js-delete-todo')) {
+    const todoKey = event.target.parentElement.dataset.key;
+    deleteTodo(todoKey);
+  }
+  if (event.target.classList.contains('js-tick')) {
+    const todoKey = event.target.parentElement.dataset.key;
+    todoDone(todoKey);
+  }
+});
+
+const form = document.querySelector('.js-form');
+form.addEventListener('submit', event => {
+  event.preventDefault();
+  const input = document.querySelector('.js-todo-input');
+
+  const text = input.value.trim();
+  if (text !== '') {
+    addTodo(text);
+    input.value = '';
+    input.focus();
+  }
+  else{
+    alert("Invalid task. Please input an actual task.")
+  }
+});
+  </script>
+  </html>
